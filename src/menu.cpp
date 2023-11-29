@@ -16,7 +16,7 @@ void PrintLogo(){
 
 }
 
-void PrintLogo(){
+void PrintRegras(){
     std::string kermo = "Regras do Jogo:";
 
     std::cout << kermo << std::endl;
