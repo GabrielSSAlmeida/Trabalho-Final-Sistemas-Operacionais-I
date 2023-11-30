@@ -44,6 +44,10 @@ void IniciarJogo(std::string obj){
 
     while(numTentativas > 0){
         std::cin >> palavra;
+        while(static_cast<int>(palavra.length() > 5)){
+            std::cout << "Insira uma palavra de 5 letras!" << std::endl;
+            std::cin >> palavra;
+        }
         if(palavra != obj){
             numTentativas--;
             // Imprime a palavra com caracteres verdes / amarelos

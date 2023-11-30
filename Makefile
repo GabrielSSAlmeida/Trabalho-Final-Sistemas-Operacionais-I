@@ -1,4 +1,4 @@
-COMPILER := g++ --std=c++20
+COMPILER := clang++ -std=c++20
 COMPILATION_FLAGS := -Wall -Werror  -pthread
 
 all: clean bin bin/menu.o bin/main.o bin/palavra.o
