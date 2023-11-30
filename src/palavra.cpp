@@ -3,12 +3,11 @@
 // Função que imprime a palavra inserida pelo jogador
 // Cada caracter é impresso de acordo com sua existência em obj
 void verificaPalavra(std::string palavra, tabela letras){
-    for(int i=0; i<palavra.length(); i++){
+    for(int i=0; i<static_cast<int>(palavra.length()); i++){
         char c = palavra[i];
-        std::cout << "Caracter: " << c << std::endl;
         // O caracter não existe no objetivo
         if(letras[c].empty()){
-            printf("%c\n", c); // Imprime na cor padrão
+            std::cout << c; // Imprime na cor padrão
         } else {
             bool posicaoCorreta = false;
             // O caracter existe no objetivo
@@ -19,12 +18,10 @@ void verificaPalavra(std::string palavra, tabela letras){
             }
             if (posicaoCorreta) {
                 // Imprimir o caracter em verde
-                // std::cout << ESC << VERDE << c << RESET;
-                printf("%cV\n", c);
+                std::cout << GREEN << c << RESET;
             } else {
                 // Imprimir o caracter em amarelo
-                // std::cout << ESC << AMARELO << c << RESET;
-                printf("%cA\n", c);
+                std::cout << YELLOW << c << RESET;
             }
         }
     }
@@ -37,7 +34,7 @@ void IniciarJogo(std::string obj){
 
     // Cria um map com as letras e respectiva pos na palavra
     tabela letras;
-    for(int i=0; i<obj.length(); i++){
+    for(int i=0; i<static_cast<int>(obj.length()); i++){
         letras[obj[i]].push_back(i);
     }
 
@@ -53,7 +50,8 @@ void IniciarJogo(std::string obj){
             verificaPalavra(palavra, letras);
         } else {
             // Imprimir palavra toda verde
-            std::cout << "Palavra correta!" << std::endl;
+            // std::cout << "Palavra correta!" << std::endl;
+            std::cout << GREEN << palavra << "\n";
             break;
         }
     }

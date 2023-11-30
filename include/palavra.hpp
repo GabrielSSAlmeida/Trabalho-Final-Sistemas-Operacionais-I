@@ -2,15 +2,19 @@
 
 	#define PALAVRA_H
 
-    #define ESC "\033["
-    #define VERDE "42"
-    #define AMARELO "43"
-    #define RESET "\033[m"
+    // ANSI escape codes for text color
+    #define RESET   "\033[0m"
+    #define RED     "\033[31m"
+    #define GREEN   "\033[32m"
+    #define YELLOW  "\033[33m"
+    #define BLUE    "\033[34m"
 
     #include <iostream>
     #include <map>
+    #include <vector>
+    #include <string>
 
-    typedef std::map<char,std::vector<int> > tabela;
+    typedef std::map<char, std::vector<int> > tabela;
 	
     void IniciarJogo(std::string obj);
     	
