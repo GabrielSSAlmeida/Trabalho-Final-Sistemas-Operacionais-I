@@ -1,5 +1,5 @@
-COMPILER := clang++ -std=c++20
-COMPILATION_FLAGS := -Wall -Werror  -pthread
+COMPILER := g++
+COMPILATION_FLAGS := -Wall -Werror  -pthread -std=c++20
 
 all: clean bin bin/menu.o bin/main.o bin/palavra.o
 	$(COMPILER) $(COMPILATION_FLAGS) -o kermo \
