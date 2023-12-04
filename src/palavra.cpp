@@ -1,5 +1,48 @@
 #include "../include/palavra.hpp"
 
+
+void verificaPalavra(std::string palavra, tabela letras);
+
+
+// Função que recebe uma palavra e inicia a dinâmica
+// até que o jogador acerte ou zere suas tentativas
+void IniciarJogo(std::string obj){
+
+    // Cria um map com as letras e respectiva pos na palavra
+    tabela letras;
+    for(int i=0; i<static_cast<int>(obj.length()); i++){
+        letras[obj[i]].push_back(i);
+    }
+
+    // O jogador tem 6 tentativas
+    int numTentativas = 6;
+    std::string palavra;
+
+    while(numTentativas > 0){
+        std::cin >> palavra;
+        while(static_cast<int>(palavra.length() > 5) || static_cast<int>(palavra.length() < 5)){
+            std::cout << "Insira uma palavra de 5 letras!" << std::endl;
+            std::cin >> palavra;
+        }
+        if(palavra != obj){
+            numTentativas--;
+            // Imprime a palavra com caracteres verdes / amarelos
+            verificaPalavra(palavra, letras);
+        } else {
+            // Acerto, imprimir palavra toda verde
+            std::cout << GREEN << palavra << "\n";
+            break;
+        }
+    }
+
+    // Jogador perdeu
+    if(numTentativas == 0){
+        std::cout << "A palavra correta é: " << obj << std::endl;
+    }
+
+}
+
+
 // Função que imprime a palavra inserida pelo jogador
 // Cada caracter é impresso de acordo com sua existência em obj
 void verificaPalavra(std::string palavra, tabela letras){
@@ -26,38 +69,4 @@ void verificaPalavra(std::string palavra, tabela letras){
         }
     }
     std::cout << std::endl;
-}
-
-// Função que recebe uma palavra e inicia a dinâmica
-// até que o jogador acerte ou zere suas tentativas
-void IniciarJogo(std::string obj){
-
-    // Cria um map com as letras e respectiva pos na palavra
-    tabela letras;
-    for(int i=0; i<static_cast<int>(obj.length()); i++){
-        letras[obj[i]].push_back(i);
-    }
-
-    // O jogador tem 5 tentativas
-    int numTentativas = 5;
-    std::string palavra;
-
-    while(numTentativas > 0){
-        std::cin >> palavra;
-        while(static_cast<int>(palavra.length() > 5)){
-            std::cout << "Insira uma palavra de 5 letras!" << std::endl;
-            std::cin >> palavra;
-        }
-        if(palavra != obj){
-            numTentativas--;
-            // Imprime a palavra com caracteres verdes / amarelos
-            verificaPalavra(palavra, letras);
-        } else {
-            // Imprimir palavra toda verde
-            // std::cout << "Palavra correta!" << std::endl;
-            std::cout << GREEN << palavra << "\n";
-            break;
-        }
-    }
-
 }

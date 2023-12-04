@@ -11,8 +11,10 @@
 
     #include <iostream>
     #include <map>
+    #include <unordered_map>
     #include <vector>
     #include <string>
+    #include <algorithm>
 
     typedef std::map<char, std::vector<int> > tabela;
 	
