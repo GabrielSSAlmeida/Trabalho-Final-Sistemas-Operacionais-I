@@ -1,15 +1,15 @@
 #include "../../include/controllers/controllers.hpp"
 #include <iostream>
 
-StartController::StartController(GameContent *content) 
-    : Controller(content) {}
+StartController::StartController(GameData *data) 
+    : Controller(data) {}
 
 StartController::~StartController() {}
 
-bool StartController::isLastController() { return false; }
+bool StartController::IsLastController() { return false; }
 
-DisplayContent StartController::getDisplayContent() {
-    std::string content = 
+DisplayContent StartController::GetDisplayContent() {
+    std::string aux = 
     "\n\n"
     "#    # ####### ######  #     # #######\n"
     "#   #  #       #     # ##   ## #     #\n"
@@ -28,18 +28,18 @@ DisplayContent StartController::getDisplayContent() {
     "Pressione enter para começar!\n"
     ;
 
-    return DisplayContent(content, &content->timer, false);
+    return DisplayContent(aux, &data->timer, false);
 }
 
-void StartController::handleInput() {
+void StartController::HandleInput() {
     if(std::cin.peek() == '\n')
         std::cin.ignore();
     std::cin.get();
 }
 
-Controller *StartController::next() {
+Controller *StartController::Next() {
     if (jump_to_last_page)
-        return new FinalController(content);
-    return new GuessController(content);
+        return new FinalController(data);
+    return new GuessController(data);
 }
 

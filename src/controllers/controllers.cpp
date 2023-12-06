@@ -1,16 +1,16 @@
 #include "../../include/controllers/controllers.hpp"
 
-Controller::Controller(GameData *content) {
-    this->content = content;
+Controller::Controller(GameData *data) {
+    this->data = data;
     jump_to_last_page = false;
 }
 
 Controller::~Controller() {}
 
-bool Controller::isLastController() { return false; }
+bool Controller::IsLastController() { return false; }
 
-DisplayContent Controller::getDisplayContext() { return DisplayContent(); }
+DisplayContent Controller::GetDisplayContext() { return DisplayContent(); }
 
-void Controller::handleInput() {}
+void Controller::HandleInput() {}
 
-Controller *Controller::next() { return NULL; }
+Controller *Controller::Next() { return NULL; }

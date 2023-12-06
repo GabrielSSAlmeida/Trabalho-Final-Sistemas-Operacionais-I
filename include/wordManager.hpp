@@ -15,18 +15,18 @@ class WordManager {
         std::ifstream wordFile;
         SharedBuffer<std::string> nextWordBuffer;
         int wordCounter;
-        std::string nextWord;
+        std::string currentWord;
 
-        void readNextWord();
+        void ReadNextWord();
 
     public:
         WordManager(const std::string &wordsAddress);
 
         ~WordManager();
 
-        std::string getNextWord();
+        std::string GetNextWord();
 
-        bool isCorrect(char answer);
+        bool IsCorrect(std::string answer);
 };
 
 #endif

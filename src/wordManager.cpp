@@ -1,56 +1,55 @@
-#include "../include/wordManager.h"
+#include "../include/wordManager.hpp"
 #include <fstream>
 #include <thread>
 #include <ctype.h>
+#include <algorithm>
 
 #include <ranges>
 
-#define NUMBER_OF_WORDS 20
+#define NUMBER_OF_WORDS 2293
 
 using namespace std;
 
-void WordsManager::readNextWord(){
-    if(isRunning){
-        std::getline(wordFile, nextWord);
-    }
+void WordManager::ReadNextWord(){
+    nextWordBuffer.write("kermo");
 }
 
-WordsManager::WordsManager(const std::string &wordsAddress) {
+WordManager::WordManager(const std::string &wordsAddress) {
     wordFile.open(wordsAddress);
     
     wordCounter = -1;
-    is_running = true;
+    isRunning = true;
 
     sem_init(&stop, 0, 0);
-    thread([=]{
-        while(is_running) {
-            readNextWord();
+    thread([&]{
+        while(isRunning) {
+            ReadNextWord();
         }
         sem_post(&stop);
     }).detach();
 }
 
-WordsManager::~WordsManager() {
+WordManager::~WordManager() {
     isRunning = false;
-    getNextWord();
+    GetNextWord();
     sem_wait(&stop);
     wordFile.close();
 }
 
-std::string WordsManager::getNextWord(){
+std::string WordManager::GetNextWord(){
     if(wordCounter >= NUMBER_OF_WORDS)
         return string("");
 
-    std::string word = nextWordBuffer.read();
+    currentWord = nextWordBuffer.read();
     wordCounter++;
 
-    return word;
+    return currentWord;
 }
 
-bool WordsManager::isCorrect(std::string answer){
-    std::ranges::transform(answer, answer.begin(), [](unsigned char &c){
+bool WordManager::IsCorrect(std::string answer) {
+    std::transform(answer.begin(), answer.end(), answer.begin(), [](unsigned char c) {
         return std::tolower(c);
     });
 
-    return answer;
+    return answer == currentWord;
 }

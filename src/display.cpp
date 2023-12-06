@@ -1,7 +1,7 @@
-#include "../../include/display/display.hpp"
+#include "../include/display.hpp"
 
-Display::Display(SharedBuffer<DisplayContext> *buffer) {
-    displayThread = std::thread([=]{
+Display::Display(SharedBuffer<DisplayContent> *buffer) {
+    displayThread = std::thread([&]{
         
         PagesManager pages_manager(buffer);
 

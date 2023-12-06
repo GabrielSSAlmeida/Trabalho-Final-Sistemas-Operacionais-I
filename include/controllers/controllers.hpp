@@ -11,63 +11,62 @@ class Controller {
 
         virtual ~Controller();
 
-        virtual bool isLastController();
+        virtual bool IsLastController();
 
-        virtual DisplayContent getDisplayContext();
+        virtual DisplayContent GetDisplayContext();
         
-        virtual void handleInput();
+        virtual void HandleInput();
 
-        virtual Controller *next();
+        virtual Controller *Next();
 
     protected:
-        GameData *content;
-        int rightGuesses;
+        GameData *data;
         bool jump_to_last_page;
 };
 
 class StartController : public Controller {
     public:
-        StartController(GameData *content, int rightGuesses);
+        StartController(GameData *data);
 
         ~StartController();
 
-        bool isLastController();
+        bool IsLastController();
 
-        DisplayContent getDisplayContext();
+        DisplayContent GetDisplayContent();
         
-        void handleInput();
+        void HandleInput();
 
-        Controller *next();
+        Controller *Next();
 };
 
 class GuessController : public Controller {
     public:
-        GuessController(GameData *context, int rightGuesses);
+        GuessController(GameData *data);
 
         ~GuessController();
 
-        bool isLastController();
+        bool IsLastController();
 
-        DisplayContent getDisplayContext();
+        DisplayContent GetDisplayContent();
         
-        void handleInput();
+        void HandleInput();
 
-        Controller *next();
+        Controller *Next();
 };
 
 class FinalController : public Controller {
     public:
-        FinalController(GameData *content, int rightGuesses);
+        FinalController(GameData *data);
 
         ~FinalController();
 
-        bool isLastController();
+        bool IsLastController();
 
-        DisplayContent getDisplayContext();
+        DisplayContent GetDisplayContent();
         
-        void handleInput();
+        void HandleInput();
 
-        Controller *next();
+        Controller *Next();
 };
 
 #endif

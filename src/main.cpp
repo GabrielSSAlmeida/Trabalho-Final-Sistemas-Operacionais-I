@@ -1,87 +1,40 @@
 #include <iostream>
 #include <cstdio>
 
-#include "../include/menu.hpp" 
-#include "../include/palavra.hpp"
+#include "../include/display.hpp"
+#include "../include/controllers/engine.hpp"
 
-// #define TIMELIMIT 300
+const std::string wordsAddress = "words.txt";
 
-// std::mutex consoleMutex;
-
-// int *inputCounter = &numTentativas;
-
-// void displayProgressBar(int progress, int total){
-//     const int barWidth = 100;
-//     float percentage = static_cast<float>(progress) / total;
-//     int progressBarWidth = static_cast<int>(barWidth * percentage);
-
-//     {
-//         std::lock_guard<std::mutex> lock(consoleMutex);  // Lock to protect console output
-        
-//         std::cout << "\e[A" << "\r";
-        
-//         std::cout << "[";
-//         for (int i = 0; i < barWidth; ++i) {
-//             if (i < progressBarWidth) {
-//                 std::cout << "=";
-//             } else {
-//                 std::cout << " ";
-//             }
-//         }
-
-//         // Calculating time in minutes
-//         int minutes = 0;
-//         while(progress >= 60){        
-//             minutes++;
-//             progress -= 60;
-//         }
-
-//         //std::cout << "] " << static_cast<int>(minutes) << ":" << static_cast<int>(progress) << " left\r";
-//         std::cout << "] " << std::setfill('0') << std::setw(2) << minutes << ":" << std::setw(2) << progress << " left";
-//         std::cout.flush();
-//     }
-// }
-
-// void countdownTimer(int seconds){
-//     for (int i = seconds; i > 0; --i) {
-//         displayProgressBar(i, seconds);
-//         {
-//             std::lock_guard<std::mutex> lock(consoleMutex);  // Lock to protect console output
-        
-//             std::cout << "\n";
-//         }
-
-//         std::this_thread::sleep_for(std::chrono::seconds(1));
-//     }
-
-//     // Display a newline to move to the next line after the progress bar
-//     {
-//         std::lock_guard<std::mutex> lock(consoleMutex);  // Lock to protect console output
-//         std::cout << std::endl;
-//     }
-// }
+#define WINDOW_HEIGHT 50
+#define WINDOW_WIDTH 50
 
 int main(){
     // Oculta o cursor no terminal
     std::cout << "\e[?25l";
 
-    PrintMenu();
+    // PrintMenu();
 
-    // Iniciar timer
-    // Enquanto tiver tempo...
-    // Receber palavra aleatória do arquivo
+    // // Iniciar timer
+    // // Enquanto tiver tempo...
+    // // Receber palavra aleatória do arquivo
 
-    // Iniciar timer
-    std::thread countdownThread(countdownTimer, TIMELIMIT);
+    // // Iniciar timer
+    // std::thread countdownThread(countdownTimer, TIMELIMIT);
 
-    std::string palavra = "kermo";
+    // std::string palavra = "kermo";
     
-    // Jogo inicia para essa palavra
-    IniciarJogo(palavra);
+    // // Jogo inicia para essa palavra
+    // IniciarJogo(palavra);
 
-    countdownThread.join();
+    // countdownThread.join();
 
 
+    SharedBuffer<DisplayContent> display_context;
+    Display display(&display_context);
+    Engine engine(&display_context, wordsAddress);
+    display.startDetached();
+    engine.start_joined();
     std::cout << "\e[?25h";
 
     return  0;

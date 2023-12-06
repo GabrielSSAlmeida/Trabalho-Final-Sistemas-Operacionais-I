@@ -1,4 +1,4 @@
-#include "../../include/display_content.hpp"
+#include "../include/display_content.hpp"
 
 DisplayContent::DisplayContent() {
     content = "";

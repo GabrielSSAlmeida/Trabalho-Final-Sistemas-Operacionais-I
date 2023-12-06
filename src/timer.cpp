@@ -8,33 +8,6 @@ Timer::Timer(int startingTime) {
     sem_init(&stop, 0, 0);
 }
 
-// void Timer::displayProgressBar(int progress, int total){
-//     const int barWidth = 100;
-//     float percentage = static_cast<float>(progress) / total;
-//     int progressBarWidth = static_cast<int>(barWidth * percentage);
-
-//     std::lock_guard<std::mutex> lock(consoleMutex);  // Lock to protect console output
-//     std::cout << "[";
-//     for (int i = 0; i < barWidth; ++i) {
-//         if (i < progressBarWidth) {
-//             std::cout << "=";
-//         } else {
-//             std::cout << " ";
-//         }
-//     }
-
-//     // Calculating time in minutes
-//     int minutes = 0;
-//     while(progress >= 60){        
-//         minutes++;
-//         progress -= 60;
-//     }
-
-//     //std::cout << "] " << static_cast<int>(minutes) << ":" << static_cast<int>(progress) << " left\r";
-//     std::cout << "] " << std::setfill('0') << std::setw(2) << minutes << ":" << std::setw(2) << progress << " left\r";
-//     std::cout.flush();
-// }
-
 void Timer::Start(){
     if (IsRunning() || TimedOut())
         Reset();
@@ -42,7 +15,7 @@ void Timer::Start(){
     timerRunning = true;
     timeLeft = startingTime;
 
-    std::thread([=]{ 
+    std::thread([&]{ 
         while(timeLeft > 0 && timerRunning) {
             std::this_thread::sleep_for(std::chrono::seconds(1));
             timeLeft--;

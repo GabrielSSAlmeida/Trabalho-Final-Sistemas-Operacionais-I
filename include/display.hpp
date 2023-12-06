@@ -3,7 +3,7 @@
 
 #include "display_content.hpp" 
 #include "pages_manager.hpp" 
-#include "../shared_buffer.hpp"
+#include "shared_buffer.hpp"
 #include <thread>
 #include <atomic>
 
@@ -18,7 +18,7 @@ class Display{
         void startJoined();
 
     private:
-        SharedBuffer<DisplayContext> *buffer;
+        SharedBuffer<DisplayContent> *buffer;
         std::thread displayThread;
 };
 

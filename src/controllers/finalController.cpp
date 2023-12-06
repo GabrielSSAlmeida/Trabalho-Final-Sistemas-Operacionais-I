@@ -1,31 +1,28 @@
-#include "../../include/controllers/controllers.h"
+#include "../../include/controllers/controllers.hpp"
 #include <iostream>
 
-static const std::vector<int> PRIZES({0, 50000, 75000, 250000, 1000000});
-
-FinalController::FinalController(GameContext *context) : Controller(context) {}
+FinalController::FinalController(GameData *data) : Controller(data) {}
 
 FinalController::~FinalController() {}
 
-bool FinalController::isLastController() { return true; }
+bool FinalController::IsLastController() { return true; }
 
-DisplayContext FinalController::getDisplayContext() {
+DisplayContent FinalController::GetDisplayContent() {
     std::string content;
-    int prize = PRIZES[context->correct_answers / 5];
-    if (prize == 1000000)
-        content = "Parabéns!!! Você ganhou o jogo e agora é milionário!";
-    else 
-        content = "Fim de jogo. Você ganhou $" + std::to_string(prize) + "\n\n";
+    
+    content = "Pontuação:" + std::to_string(data->correctGuesses) + "\n\n";
+    
     content += "Pressione enter para sair...";
-    return DisplayContext(content, &context->timer, true);
+
+    return DisplayContent(content, &data->timer, true);
 }
 
-void FinalController::handleInput() {
+void FinalController::HandleInput() {
     if (std::cin.peek() == '\n')
         std::cin.ignore();
     std::cin.get();
 }
 
-Controller *FinalController::next() {
+Controller *FinalController::Next() {
     return NULL;
 }

@@ -1,7 +1,7 @@
-#include "../../include/display/pages_manager.h"
+#include "../include/pages_manager.hpp"
 #include <iostream>
 
-PagesManager::PagesManager(SharedBuffer<DisplayContext> *buffer) {
+PagesManager::PagesManager(SharedBuffer<DisplayContent> *buffer) {
     this->buffer = buffer;
     next_page();
 }
@@ -10,17 +10,19 @@ PagesManager::~PagesManager() {}
 
 void PagesManager::display_page() {
     std::system("tput reset");
-    std::cout << context.content << std::endl;
-    bool clear_after = context.timer->is_running();
 
-    while(context.timer->is_running()) {
-        std::cout << "\r" << context.timer->to_string() 
-            << std::string(50, ' ') << "Resposta: " << std::flush;
+    std::cout << context.content << std::endl;
+
+    bool clear_after = context.timer->IsRunning();
+
+    while(context.timer->IsRunning()) {
+        std::cout << "\r" << context.timer->ToString() 
+            << std::string(50, ' ') << "R: " << std::flush;
     }
     
     if (clear_after) {
         std::system("tput reset");
-        if (context.timer->timed_out())
+        if (context.timer->TimedOut())
             std::cout << "Aperte enter para ver os resultados..." << std::endl;
     }
 }

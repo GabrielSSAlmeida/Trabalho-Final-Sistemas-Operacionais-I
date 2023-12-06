@@ -2,10 +2,11 @@
 #define PAGES
 
 #include "display_content.hpp"
+#include "shared_buffer.hpp"
 
 class PagesManager {
     public:
-        PagesManager(SharedBuffer<DisplayContext> *buffer);
+        PagesManager(SharedBuffer<DisplayContent> *buffer);
 
         ~PagesManager();
 
@@ -16,7 +17,7 @@ class PagesManager {
         void next_page();
 
     protected:
-        SharedBuffer<DisplayContext> *buffer;
+        SharedBuffer<DisplayContent> *buffer;
         DisplayContent context;
 };
 
