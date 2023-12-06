@@ -9,11 +9,6 @@
 
 using namespace std;
 
-const std::vector<char> CORRECT_ANSWERS({
-    'A', 'C', 'D', 'C', 'B', 'D', 'A', 'A', 'A', 'C',
-    'B', 'B', 'A', 'D', 'D', 'B', 'D', 'A', 'C', 'B'
-});
-
 void WordsManager::readNextWord(){
     if(isRunning){
         std::getline(wordFile, nextWord);
