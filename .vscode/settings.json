@@ -68,7 +68,13 @@
     "optional": "cpp",
     "ratio": "cpp",
     "sstream": "cpp",
-    "variant": "cpp"
+    "variant": "cpp",
+    "chrono": "cpp",
+    "semaphore": "cpp",
+    "stop_token": "cpp",
+    "thread": "cpp",
+    "condition_variable": "cpp",
+    "iomanip": "cpp"
   },
   "C_Cpp_Runner.cCompilerPath": "gcc",
   "C_Cpp_Runner.cppCompilerPath": "g++",

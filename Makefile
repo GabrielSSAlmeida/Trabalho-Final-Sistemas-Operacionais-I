@@ -1,7 +1,7 @@
 COMPILER := g++
 COMPILATION_FLAGS := -Wall -Werror  -pthread -std=c++20
 
-all: clean bin bin/menu.o bin/main.o bin/palavra.o
+all: clean bin bin/menu.o bin/palavra.o bin/main.o
 	$(COMPILER) $(COMPILATION_FLAGS) -o kermo \
 		 bin/menu.o bin/main.o bin/palavra.o
 

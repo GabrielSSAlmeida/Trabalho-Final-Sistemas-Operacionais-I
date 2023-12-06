@@ -16,6 +16,8 @@
     #include <string>
     #include <algorithm>
 
+    extern int numTentativas;
+
     typedef std::map<char, std::vector<int> > tabela;
 	
     void IniciarJogo(std::string obj);

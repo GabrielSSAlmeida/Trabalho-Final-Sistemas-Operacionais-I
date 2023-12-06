@@ -3,6 +3,8 @@
 
 void verificaPalavra(std::string palavra, tabela letras);
 
+// O jogador tem 6 tentativas
+int numTentativas = 6;
 
 // Função que recebe uma palavra e inicia a dinâmica
 // até que o jogador acerte ou zere suas tentativas
@@ -14,8 +16,7 @@ void IniciarJogo(std::string obj){
         letras[obj[i]].push_back(i);
     }
 
-    // O jogador tem 6 tentativas
-    int numTentativas = 6;
+    
     std::string palavra;
 
     while(numTentativas > 0){
