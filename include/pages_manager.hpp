@@ -1,7 +1,7 @@
 #ifndef PAGES
 #define PAGES
 
-#include "display_context.h"
+#include "display_content.hpp"
 
 class PagesManager {
     public:
@@ -17,7 +17,7 @@ class PagesManager {
 
     protected:
         SharedBuffer<DisplayContext> *buffer;
-        DisplayContext context;
+        DisplayContent context;
 };
 
 #endif

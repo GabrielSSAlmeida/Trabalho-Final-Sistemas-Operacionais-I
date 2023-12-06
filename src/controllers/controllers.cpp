@@ -1,7 +1,7 @@
-#include "../../include/control/controllers.h"
+#include "../../include/controllers/controllers.hpp"
 
-Controller::Controller(GameContext *context) {
-    this->context = context;
+Controller::Controller(GameData *content) {
+    this->content = content;
     jump_to_last_page = false;
 }
 
@@ -9,7 +9,7 @@ Controller::~Controller() {}
 
 bool Controller::isLastController() { return false; }
 
-DisplayContext Controller::getDisplayContext() { return DisplayContext(); }
+DisplayContent Controller::getDisplayContext() { return DisplayContent(); }
 
 void Controller::handleInput() {}
 

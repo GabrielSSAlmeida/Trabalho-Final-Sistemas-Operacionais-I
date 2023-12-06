@@ -2,7 +2,7 @@
     #define DISPLAY_CONTENT
 
     #include <iostream>
-    #include "../timer.hpp"
+    #include "timer.hpp"
 
     class DisplayContent{
         public:

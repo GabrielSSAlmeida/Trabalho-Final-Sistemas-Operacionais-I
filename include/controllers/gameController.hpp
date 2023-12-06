@@ -1,7 +1,7 @@
-#ifndef GAME_CONTEXT
-#define GAME_CONTEXT
+#ifndef GAME_CONTROLLER
+#define GAME_CONTROLLER
 
-#include "../questions_manager.hpp"
+#include "../wordManager.hpp"
 #include "../timer.hpp" 
 
 class GameData{
@@ -10,7 +10,7 @@ class GameData{
         Timer timer;
         int correctGuesses;
 
-        GameData(const std::string questions_addr, int questions_timeout); 
+        GameData(const std::string wordsAddress, int timeLeft); 
 };
 
 #endif

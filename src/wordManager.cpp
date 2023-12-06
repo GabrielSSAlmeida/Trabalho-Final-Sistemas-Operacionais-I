@@ -14,50 +14,45 @@ const std::vector<char> CORRECT_ANSWERS({
     'B', 'B', 'A', 'D', 'D', 'B', 'D', 'A', 'C', 'B'
 });
 
-void WordsManager::readNextQuestion() {
-    if (isRunning) {
-        std::string nextWord;
+void WordsManager::readNextWord(){
+    if(isRunning){
         std::getline(wordFile, nextWord);
-        std::string aux;
-        for (int i = 0; i < NUMBER_OF_ALTERNATIVES; i++) {
-            std::getline(wordFile, aux);
-            nextWord.append("\n").append(aux);
-        }
-        std::getline(wordFile, aux);
-        nextWord.append("\n").append(std::string(REFUSE_TO_ANSWER));
-        nextWord_buffer.write(nextWord);
     }
 }
 
-WordsManager::WordsManager(const std::string &words_address) {
-    wordFile.open(Words_address);
-    current_question = -1;
+WordsManager::WordsManager(const std::string &wordsAddress) {
+    wordFile.open(wordsAddress);
+    
+    wordCounter = -1;
     is_running = true;
+
     sem_init(&stop, 0, 0);
     thread([=]{
         while(is_running) {
-            read_nextWord();
+            readNextWord();
         }
         sem_post(&stop);
     }).detach();
 }
 
 WordsManager::~WordsManager() {
-    is_running = false;
-    get_nextWord();
+    isRunning = false;
+    getNextWord();
     sem_wait(&stop);
     wordFile.close();
 }
 
-std::string WordsManager::get_nextWord() {
-    if (current_question >= NUMBER_OF_Words)
+std::string WordsManager::getNextWord(){
+    if(wordCounter >= NUMBER_OF_WORDS)
         return string("");
-    std::string question = nextWord_buffer.read();
-    current_question++;
-    return question;
+
+    std::string word = nextWordBuffer.read();
+    wordCounter++;
+
+    return word;
 }
 
-bool WordsManager::isCorrect(std::string answer) {
+bool WordsManager::isCorrect(std::string answer){
     std::ranges::transform(answer, answer.begin(), [](unsigned char &c){
         return std::tolower(c);
     });
