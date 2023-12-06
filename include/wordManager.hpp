@@ -14,18 +14,18 @@ class WordManager {
         std::atomic<bool> isRunning;
         std::ifstream wordFile;
         SharedBuffer<std::string> nextWordBuffer;
-        int currentWord;
+        int wordCounter;
 
-        void readNextWord();
+        void ReadNextWord();
 
     public:
         WordManager(const std::string &Word_adderess);
 
         ~WordManager();
 
-        std::string getNextWord();
+        std::string GetNextWord();
 
-        bool isCorrect(char answer);
+        bool isCorrect(std::string answer);
 };
 
 #endif

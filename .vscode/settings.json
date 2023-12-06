@@ -75,7 +75,8 @@
     "thread": "cpp",
     "condition_variable": "cpp",
     "iomanip": "cpp",
-    "fstream": "cpp"
+    "fstream": "cpp",
+    "ranges": "cpp"
   },
   "C_Cpp_Runner.cCompilerPath": "gcc",
   "C_Cpp_Runner.cppCompilerPath": "g++",

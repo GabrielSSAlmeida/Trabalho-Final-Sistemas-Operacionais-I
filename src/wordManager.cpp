@@ -1,66 +1,83 @@
-#include "../include/wordManager.h"
+#include "../include/wordManager.hpp"
 #include <fstream>
 #include <thread>
 #include <ctype.h>
+#include <iostream>
 
 #include <ranges>
 
-#define NUMBER_OF_WORDS 20
+#define CHAR_BYTES 1
+#define WORD_SIZE 6
+
+#define NUMBER_OF_WORDS 2293
 
 using namespace std;
 
-const std::vector<char> CORRECT_ANSWERS({
-    'A', 'C', 'D', 'C', 'B', 'D', 'A', 'A', 'A', 'C',
-    'B', 'B', 'A', 'D', 'D', 'B', 'D', 'A', 'C', 'B'
-});
 
-void WordsManager::readNextQuestion() {
+void WordManager::ReadNextWord() {
     if (isRunning) {
-        std::string nextWord;
-        std::getline(wordFile, nextWord);
-        std::string aux;
-        for (int i = 0; i < NUMBER_OF_ALTERNATIVES; i++) {
-            std::getline(wordFile, aux);
-            nextWord.append("\n").append(aux);
+        std::string randomWord;
+        int numWords = 0;
+        if (wordFile.is_open()) {
+            // Obtém o tamanho total do arquivo
+            wordFile >> numWords;
+
+            // Garante que há pelo menos um caractere no arquivo
+            if (numWords > 0) {
+                srand(static_cast<unsigned>(time(nullptr)));
+                int random = rand() % numWords;
+
+                int byteoffsetWOrd = (random * WORD_SIZE * CHAR_BYTES);
+    
+                // Move o ponteiro do arquivo para a posição aleatória
+                wordFile.seekg(byteoffsetWOrd, std::ios::beg);
+
+                // Lê a palavra aleatória
+                wordFile >> randomWord;
+            } else {
+                std::cerr << "O arquivo está vazio." << std::endl;
+            }
+
+            wordFile.close();
+        } else {
+            std::cerr << "Erro ao abrir o arquivo" << std::endl;
         }
-        std::getline(wordFile, aux);
-        nextWord.append("\n").append(std::string(REFUSE_TO_ANSWER));
-        nextWord_buffer.write(nextWord);
+        nextWordBuffer.write(randomWord);
     }
 }
 
-WordsManager::WordsManager(const std::string &words_address) {
-    wordFile.open(Words_address);
-    current_question = -1;
-    is_running = true;
+WordManager::WordManager(const std::string &words_address) {
+    wordFile.open(words_address);
+    wordCounter = -1;
+    isRunning = true;
     sem_init(&stop, 0, 0);
     thread([=]{
-        while(is_running) {
-            read_nextWord();
+        while(isRunning) {
+            ReadNextWord();
         }
         sem_post(&stop);
     }).detach();
 }
 
-WordsManager::~WordsManager() {
-    is_running = false;
-    get_nextWord();
+WordManager::~WordManager() {
+    isRunning = false;
+    GetNextWord();
     sem_wait(&stop);
     wordFile.close();
 }
 
-std::string WordsManager::get_nextWord() {
-    if (current_question >= NUMBER_OF_Words)
+std::string WordManager::GetNextWord() {
+    if (wordCounter >= NUMBER_OF_WORDS)
         return string("");
-    std::string question = nextWord_buffer.read();
-    current_question++;
+    std::string question = nextWordBuffer.read();
+    wordCounter++;
     return question;
 }
 
-bool WordsManager::isCorrect(std::string answer) {
+bool WordManager::isCorrect(std::string answer) {
     std::ranges::transform(answer, answer.begin(), [](unsigned char &c){
         return std::tolower(c);
     });
 
-    return answer;
+    return answer == curr;
 }

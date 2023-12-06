@@ -1,4 +1,4 @@
-#include "../../include/display/pages_manager.h"
+#include "../include/display/pages_manager.hpp"
 #include <iostream>
 
 PagesManager::PagesManager(SharedBuffer<DisplayContext> *buffer) {
