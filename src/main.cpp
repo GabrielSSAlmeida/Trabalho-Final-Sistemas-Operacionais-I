@@ -9,24 +9,28 @@
 #include "../include/menu.hpp" 
 #include "../include/palavra.hpp"
 
+#define CHAR_BYTES 1
+#define WORD_SIZE 6
+#define HEAD_SIZE 5
+
+
 // Função para ler uma palavra aleatória do arquivo
 void readRandomWord(const std::string& filename, std::string& randomWord) {
     std::ifstream file(filename);
-
+    int numWords = 0;
     if (file.is_open()) {
         // Obtém o tamanho total do arquivo
-        file.seekg(0, std::ios::end);
-        int fileSize = file.tellg();
-        file.seekg(0, std::ios::beg);
+        file >> numWords;
 
         // Garante que há pelo menos um caractere no arquivo
-        if (fileSize > 0) {
-            // Gera um índice aleatório no intervalo [0, fileSize-1]
+        if (numWords > 0) {
             srand(static_cast<unsigned>(time(nullptr)));
-            int randomIndex = 6*3*1;
+            int random = rand() % numWords;
 
+            int byteoffsetWOrd = (random * WORD_SIZE * CHAR_BYTES)+HEAD_SIZE;
+   
             // Move o ponteiro do arquivo para a posição aleatória
-            file.seekg(randomIndex, std::ios::beg);
+            file.seekg(byteoffsetWOrd, std::ios::beg);
 
             // Lê a palavra aleatória
             file >> randomWord;
