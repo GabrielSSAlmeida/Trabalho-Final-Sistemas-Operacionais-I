@@ -153,7 +153,6 @@ std::string verificaPalavra(std::string palavra);
 
 void entradaUser(){
     std::string enter;
-    char fds[2000];
 
     while(!gameOver)
     {
