@@ -1,19 +1,40 @@
+#include "../include/timer.hpp"
+#include "../include/display.hpp"
+#include "../include/input.hpp"
 #include <iostream>
-#include <cstdio>
+#include <chrono>
+#include <thread>
+#include <semaphore>
 
-#include "../include/menu.hpp" 
-#include "../include/palavra.hpp"
+#define MAX_TIME 50
 
-int main(){
+int main() {
 
-    PrintMenu();
+    //Starting Timer
+    Timer timer(MAX_TIME);
+    std::thread timerThread(&Timer::Start,&timer);
 
-    // Iniciar timer
-    // Enquanto tiver tempo...
-    // Receber palavra aleatória do arquivo
-    std::string palavra = "kermo";
-    // Jogo inicia para essa palavra
-    IniciarJogo(palavra);
+    //Starting Display
+    Display display(&timer);
+    //display.RunDisplay();
+    std::thread displayThread(&Display::RunDisplay, &display);
+    displayThread.detach();
 
-    return  0;
+
+    timerThread.join();
+
+    // //Starting InputReader
+    // UserReader userReader;
+    // userReader.Start();
+    // userReader.GetUserInput();
+
+    // //std::thread inputThread(&UserReader::GetUserInput, &userReader);
+
+    //std::this_thread::sleep_for(std::chrono::seconds(50));
+    // //displayThread.join();
+    // //inputThread.join();
+
+
+
+    return 0;
 }

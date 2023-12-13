@@ -46,6 +46,7 @@
             std::atomic<bool> timerRunning;
             std::atomic<int> timeLeft; 
             int startingTime;
+            std::thread timerThread;
 
         public:
             Timer(int starting_time);
@@ -63,6 +64,8 @@
             bool IsRunning();
 
             void AddBonus(int tries);
+
+            void Join();
     };
 
 #endif
