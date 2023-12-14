@@ -34,11 +34,11 @@ bool gameOver = false;
 int numTentativasRestantes = 6;
 int acertos = 0;
 
-
 std::mutex mutexBuffer;
 std::string buffer("");
 std::mutex mutexTentativas;
 std::mutex mutexAcertos;
+std::mutex gameOverMutex;
 
 void PrintLogo(){
     std::string kermo = 
@@ -56,14 +56,19 @@ void PrintLogo(){
 }
 
 void timer(){
-    while (!gameOver)
+    while(!gameOver)
     {
         std::this_thread::sleep_for(std::chrono::seconds(1));
         mutexContador.lock();
         --contador;
+        if(contador == 0){
+            gameOverMutex.lock();
+            gameOver = true;
+            gameOverMutex.unlock();
+        }
         mutexContador.unlock();
     }
-    
+
 }
 
 void PrintTimer(){
@@ -128,7 +133,12 @@ void imprimeTerminal(){
         }
         std::cout << numTentativasRestantes << "\n\n" << RESET;
 
-        if(numTentativasRestantes == 0) gameOver = true;
+        if(numTentativasRestantes == 0){
+            gameOverMutex.lock();
+            gameOver = true;
+            gameOverMutex.unlock();
+        }
+
         mutexTentativas.unlock();
 
         mutexBuffer.lock();
@@ -136,10 +146,6 @@ void imprimeTerminal(){
         mutexBuffer.unlock();
 
         console_largaTela();
-
-        mutexContador.lock();
-        if(contador == 0) gameOver = true;
-        mutexContador.unlock();
     }
 
     ImprimeGameOver();
@@ -152,13 +158,17 @@ void imprimeTerminal(){
 std::string verificaPalavra(std::string palavra);
 
 void entradaUser(){
-    std::string enter;
-    char fds[2000];
+    char aux[2000];
 
-    while(!gameOver)
-    {
-        std::cin >> enter;
+    gameOverMutex.lock();
+    while(!gameOver){
+        gameOverMutex.unlock();
 
+        fgets(aux, 2000, stdin);
+
+        std::string enter(aux);
+        enter.pop_back();
+        
         if(enter.length() == 5){
 
             std::string formatada = verificaPalavra(enter);
@@ -171,7 +181,10 @@ void entradaUser(){
             buffer += formatada;
             mutexBuffer.unlock();
         }
+
+        gameOverMutex.lock();
     }
+    gameOverMutex.unlock();
     
 }
 
@@ -241,6 +254,8 @@ int main() {
     std::thread p_teclado(entradaUser);
 
     p_teclado.join();
+    p_terminal.join();
+    p_timer.join();
 
     return 0;
 }
