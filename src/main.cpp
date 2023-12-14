@@ -224,11 +224,7 @@ std::string verificaPalavra(std::string palavra);
 
 
 void entradaUser(){
-<<<<<<< HEAD
-    std::string enter;
-=======
     char aux[20];
->>>>>>> StartingOver!
 
     while(!gameOver){
         fgets(aux, 20, stdin);
