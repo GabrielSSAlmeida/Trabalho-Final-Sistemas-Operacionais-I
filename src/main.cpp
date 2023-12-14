@@ -69,7 +69,8 @@ void ArmazenaPalavra(std::string obj){
 
 
 // Função para ler uma palavra aleatória do arquivo
-void readRandomWord(const std::string& filename, std::string& randomWord){
+void readRandomWord(const std::string& filename){
+    std::string randomWord;
     std::ifstream file(filename);
     int numWords = 0;
     if(file.is_open()){
@@ -77,7 +78,7 @@ void readRandomWord(const std::string& filename, std::string& randomWord){
         file >> numWords;
 
         // Garante que há pelo menos um caractere no arquivo
-        while(numWords > 0 && !gameOver){
+        if(numWords > 0){
             srand(static_cast<unsigned>(time(nullptr)));
             int random = rand() % numWords;
 
@@ -90,10 +91,6 @@ void readRandomWord(const std::string& filename, std::string& randomWord){
 
             file >> randomWord;
             ArmazenaPalavra(randomWord);
-
-
-            std::unique_lock<std::mutex> lock(mutexArquivo);
-            semaforoArquivo.wait(lock, []{ return leituraPronta; });
 
         }
         file.close();
@@ -307,13 +304,9 @@ std::string verificaPalavra(std::string palavra){
         mutexBuffer.lock();
         buffer = "";
         mutexBuffer.unlock();
-        
 
-        {
-            std::lock_guard<std::mutex> lock(mutexArquivo);
-            leituraPronta = true;
-        }
-        semaforoArquivo.notify_all();
+
+        readRandomWord("palavrasKermo.txt");
     }
 
     return retorno;
@@ -325,7 +318,8 @@ std::string verificaPalavra(std::string palavra){
 
 int main(){
     std::string palavra;
-    std::thread p_arquivo(readRandomWord, "palavrasKermo.txt", std::ref(palavra));
+
+    readRandomWord("palavrasKermo.txt");
     std::thread p_teclado(entradaUser);
     std::thread p_timer(timer);
     std::thread p_terminal(imprimeTerminal);
@@ -334,7 +328,6 @@ int main(){
     p_teclado.join();
     p_terminal.join();
     p_timer.join();
-    p_arquivo.join();
 
     return 0;
 }
