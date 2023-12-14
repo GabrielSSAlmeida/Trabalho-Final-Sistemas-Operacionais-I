@@ -20,9 +20,6 @@
 
     void console_largaTela();
 
-    extern std::mutex tela;
-
-    extern std::mutex mutexContador;
     extern int contadorInicial;
     extern int contador;
     extern bool gameOver;
@@ -30,15 +27,20 @@
     extern int acertos;
     extern bool leituraPronta;
     extern std::vector<std::string> palavrasAcertadas;
-
-    extern std::mutex mutexBuffer;
     extern std::string buffer;
+
+    // mutex relacionados à controle de variáveis compartilhadas
+    extern std::mutex mutexBuffer;
     extern std::mutex mutexTentativas;
     extern std::mutex mutexAcertos;
     extern std::mutex gameOverMutex;
     extern std::mutex mutexArquivo;
     extern std::mutex letrasMutex;
+    extern std::mutex mutexContador;
+
+    //mutex relacionados à controle de regiões compartilhadas
     extern std::mutex proxRodadaMutex;
+    extern std::mutex tela;
 
     extern tabelaLetras letras;
 
