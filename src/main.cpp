@@ -35,12 +35,13 @@ void console_largaTela(){
 
 
 std::mutex mutexContador;
-int contadorInicial = 500;
+int contadorInicial = 180;
 int contador = contadorInicial;
 bool gameOver = false;
 int numTentativasRestantes = 6;
 int acertos = 0;
 bool leituraPronta = false;
+std::vector<std::string> palavrasAcertadas = {};
 
 std::mutex mutexBuffer;
 std::string buffer("");
@@ -48,6 +49,8 @@ std::mutex mutexTentativas;
 std::mutex mutexAcertos;
 std::mutex gameOverMutex;
 std::mutex mutexArquivo;
+std::mutex letrasMutex;
+std::mutex proxRodadaMutex;
 std::condition_variable semaforoArquivo;
 
 typedef std::map<char, std::vector<int>> tabelaLetras;
@@ -60,17 +63,18 @@ void ArmazenaPalavra(std::string obj){
 
     // Cria um map com as letras e respectiva pos na palavra
     // tabelaLetras letras;
+    letrasMutex.lock();
     letras.clear();
     for(int i=0; i<static_cast<int>(obj.length()); i++){
         letras[obj[i]].push_back(i);
     }
+    letrasMutex.unlock();
 
 }
 
 
 // Função para ler uma palavra aleatória do arquivo
-void readRandomWord(const std::string& filename){
-    std::string randomWord;
+void readRandomWord(const std::string& filename, std::string &randomWord){
     std::ifstream file(filename);
     int numWords = 0;
     if(file.is_open()){
@@ -78,7 +82,7 @@ void readRandomWord(const std::string& filename){
         file >> numWords;
 
         // Garante que há pelo menos um caractere no arquivo
-        if(numWords > 0){
+        if(numWords > 0 /*&& !gameOver*/){
             srand(static_cast<unsigned>(time(nullptr)));
             int random = rand() % numWords;
 
@@ -91,7 +95,6 @@ void readRandomWord(const std::string& filename){
 
             file >> randomWord;
             ArmazenaPalavra(randomWord);
-
         }
         file.close();
     } else {
@@ -162,20 +165,24 @@ void PrintTimer(){
     std::cout << str << RESET << "\n\n";
 }
 
-void ImprimeGameOver(){
-    std::cout << "Fim de jogo! Sua pontuação foi " << GREEN << acertos << RESET << "\n\n";
+void ImprimeGameOver(std::string palavra){
+    std::cout << "Fim de jogo! A palavra era " << RED << palavra << RESET << "\n\n";
+    std::cout << "Você encontrou " << GREEN << acertos << RESET << 
+    ((acertos == 1) ? " palavra!" : " palavras!") << "\n\n";
     std::cout << "Pressione " << BLUE << "ENTER" << RESET << " para sair.\n";
 }
 
 
-void imprimeTerminal(){
+void imprimeTerminal(std::string &palavraCorreta){
     while(!gameOver)
     {
-        std::this_thread::sleep_for(std::chrono::milliseconds(50));
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
         console_pegaTela();
         system("clear");
         PrintLogo();
         PrintTimer();
+
+        proxRodadaMutex.lock();
 
         mutexAcertos.lock();
         std::cout << "Pontuação: " << acertos << "\n";
@@ -198,6 +205,8 @@ void imprimeTerminal(){
         std::cout << buffer << "\n";
         mutexBuffer.unlock();
 
+        proxRodadaMutex.unlock();
+
         console_largaTela();
 
         mutexTentativas.lock();
@@ -211,16 +220,16 @@ void imprimeTerminal(){
         mutexTentativas.unlock();
     }
 
-    ImprimeGameOver();
+    ImprimeGameOver(palavraCorreta);
     
 }
 
 
 
-std::string verificaPalavra(std::string palavra);
+std::string verificaPalavra(std::string palavra, std::string &palavraCorreta);
 
 
-void entradaUser(){
+void entradaUser(std::string &palavraCorreta){
     char aux[20];
 
     while(!gameOver){
@@ -230,8 +239,9 @@ void entradaUser(){
         enter.pop_back();
         
         if(enter.length() == 5){
+            proxRodadaMutex.lock();
 
-            std::string formatada = verificaPalavra(enter);
+            std::string formatada = verificaPalavra(enter, palavraCorreta);
 
             mutexTentativas.lock();
             numTentativasRestantes--;
@@ -240,6 +250,8 @@ void entradaUser(){
             mutexBuffer.lock();
             buffer += formatada;
             mutexBuffer.unlock();
+
+            proxRodadaMutex.unlock();
         }
 
     }
@@ -249,65 +261,85 @@ void entradaUser(){
 
 // Função que imprime a palavra inserida pelo jogador
 // Cada caracter é impresso de acordo com sua existência em obj
-std::string verificaPalavra(std::string palavra){
+std::string verificaPalavra(std::string palavra, std::string &palavraCorreta){
 
     std::string retorno = "";
     bool correctWord = true;
 
-    for(int i=0; i<static_cast<int>(palavra.length()); i++){
-        char c = palavra[i];
-        // O caracter não existe no objetivo
-        if(letras[c].empty()){
-            retorno += c; // Imprime na cor padrão
-            correctWord = false;
-        } else {
-            bool posicaoCorreta = false;
-    
-            // O caracter existe no objetivo
-            for(int pos : letras[c]){
-                if(pos == i){
-                    posicaoCorreta = true;
+    if(palavra == palavraCorreta){
+        palavrasAcertadas.push_back(palavraCorreta);
+
+        retorno = "Palavras encontradas: ";
+        retorno += GREEN;
+        for(auto c: palavrasAcertadas){
+            retorno += c + " ";
+        }
+        //retorno += palavra;
+        retorno += RESET;
+        retorno += "\n";
+
+        mutexAcertos.lock();
+        acertos++;
+        mutexAcertos.unlock();
+        
+        mutexContador.lock();
+        contador += 10 * numTentativasRestantes;
+        if(contador > contadorInicial)
+            contador = contadorInicial;
+        mutexContador.unlock();
+
+        numTentativasRestantes = 7;
+
+        mutexBuffer.lock();
+        buffer = "";
+        mutexBuffer.unlock();
+
+        // gameOverMutex.lock();
+        // gameOver = true;
+        // gameOverMutex.unlock();
+        
+        readRandomWord("palavrasKermo.txt", std::ref(palavraCorreta));
+
+    }
+    else{
+        for(int i=0; i<static_cast<int>(palavra.length()); i++){
+            char c = palavra[i];
+            // O caracter não existe no objetivo
+            letrasMutex.lock();
+            if(letras[c].empty()){
+                retorno += c; // Imprime na cor padrão
+                correctWord = false;
+            } else {
+                bool posicaoCorreta = false;
+        
+                // O caracter existe no objetivo
+                for(int pos : letras[c]){
+                    if(pos == i){
+                        posicaoCorreta = true;
+                    }else{
+                        correctWord = false;
+                    }
+                }
+                if(posicaoCorreta) {
+                    // Imprimir o caracter em verde
+                    retorno += GREEN;
+                    retorno += c;
+                    retorno += RESET;
                 }else{
-                    correctWord = false;
+                    // Imprimir o caracter em amarelo
+                    retorno += YELLOW;
+                    retorno += c; 
+                    retorno += RESET;
                 }
             }
-            if(posicaoCorreta) {
-                // Imprimir o caracter em verde
-                retorno += GREEN;
-                retorno += c;
-                retorno += RESET;
-            }else{
-                // Imprimir o caracter em amarelo
-                retorno += YELLOW;
-                retorno += c; 
-                retorno += RESET;
-            }
+
+            letrasMutex.unlock();
         }
     }
 
     retorno += "\n";
 
     
-    if(correctWord){
-        mutexAcertos.lock();
-        acertos++;
-        mutexAcertos.unlock();
-
-        numTentativasRestantes = 6;
-        
-        mutexContador.lock();
-        contador = (contador + 20);
-        if(contador > contadorInicial)
-            contador = contadorInicial;
-        mutexContador.unlock();
-
-        mutexBuffer.lock();
-        buffer = "";
-        mutexBuffer.unlock();
-
-
-        readRandomWord("palavrasKermo.txt");
-    }
 
     return retorno;
 }
@@ -318,11 +350,12 @@ std::string verificaPalavra(std::string palavra){
 
 int main(){
     std::string palavra;
+    
+    readRandomWord("palavrasKermo.txt", std::ref(palavra));
 
-    readRandomWord("palavrasKermo.txt");
-    std::thread p_teclado(entradaUser);
+    std::thread p_teclado(entradaUser, std::ref(palavra));
     std::thread p_timer(timer);
-    std::thread p_terminal(imprimeTerminal);
+    std::thread p_terminal(imprimeTerminal, std::ref(palavra));
     
 
     p_teclado.join();
