@@ -46,14 +46,14 @@ void PrintTimer(){
 void PrintLogo(){
     std::string kermo = 
         "\n\n"
-        "#    # ####### ######  #     # #######\n"
-        "#   #  #       #     # ##   ## #     #\n"
-        "#  #   #       #     # # # # # #     #\n"
-        "###    #####   ######  #  #  # #     #\n"
-        "#  #   #       #   #   #     # #     #\n"
-        "#   #  #       #    #  #     # #     #\n"
-        "#    # ####### #     # #     # #######\n"
-        "\n\n";
+        GREEN"#    #" RESET"#######" YELLOW"###### " GREEN"#     #" RESET "#######\n"
+        GREEN"#   # " RESET"#      " YELLOW"#     #" GREEN"##   ##" RESET "#     #\n"
+        GREEN"#  #  " RESET"#      " YELLOW"#     #" GREEN"# # # #" RESET "#     #\n"
+        GREEN"###   " RESET"#####  " YELLOW"###### " GREEN"#  #  #" RESET "#     #\n"
+        GREEN"#  #  " RESET"#      " YELLOW"#   #  " GREEN"#     #" RESET "#     #\n"
+        GREEN"#   # " RESET"#      " YELLOW"#    # " GREEN"#     #" RESET "#     #\n"
+        GREEN"#    #" RESET"#######" YELLOW"#     #" GREEN"#     #" RESET "#######\n"
+        RESET"\n\n";
     
     std::cout << kermo << std::endl;
 }
