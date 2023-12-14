@@ -35,12 +35,13 @@ void console_largaTela(){
 
 
 std::mutex mutexContador;
-int contadorInicial = 500;
+int contadorInicial = 180;
 int contador = contadorInicial;
 bool gameOver = false;
 int numTentativasRestantes = 6;
 int acertos = 0;
 bool leituraPronta = false;
+std::vector<std::string> palavrasAcertadas = {};
 
 std::mutex mutexBuffer;
 std::string buffer("");
@@ -164,13 +165,15 @@ void PrintTimer(){
     std::cout << str << RESET << "\n\n";
 }
 
-void ImprimeGameOver(){
-    std::cout << "Fim de jogo! Sua pontuação foi " << GREEN << acertos << RESET << "\n\n";
+void ImprimeGameOver(std::string palavra){
+    std::cout << "Fim de jogo! A palavra era " << RED << palavra << RESET << "\n\n";
+    std::cout << "Você encontrou " << GREEN << acertos << RESET << 
+    ((acertos == 1) ? " palavra!" : " palavras!") << "\n\n";
     std::cout << "Pressione " << BLUE << "ENTER" << RESET << " para sair.\n";
 }
 
 
-void imprimeTerminal(){
+void imprimeTerminal(std::string &palavraCorreta){
     while(!gameOver)
     {
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
@@ -217,7 +220,7 @@ void imprimeTerminal(){
         mutexTentativas.unlock();
     }
 
-    ImprimeGameOver();
+    ImprimeGameOver(palavraCorreta);
     
 }
 
@@ -226,7 +229,7 @@ void imprimeTerminal(){
 std::string verificaPalavra(std::string palavra, std::string &palavraCorreta);
 
 
-void entradaUser(std::string palavraCorreta){
+void entradaUser(std::string &palavraCorreta){
     char aux[20];
 
     while(!gameOver){
@@ -264,22 +267,28 @@ std::string verificaPalavra(std::string palavra, std::string &palavraCorreta){
     bool correctWord = true;
 
     if(palavra == palavraCorreta){
+        palavrasAcertadas.push_back(palavraCorreta);
+
+        retorno = "Palavras encontradas: ";
         retorno += GREEN;
-        retorno += palavra;
+        for(auto c: palavrasAcertadas){
+            retorno += c + " ";
+        }
+        //retorno += palavra;
         retorno += RESET;
         retorno += "\n";
 
         mutexAcertos.lock();
         acertos++;
         mutexAcertos.unlock();
-
-        numTentativasRestantes = 7;
         
         mutexContador.lock();
-        contador = (contador + 20);
+        contador += 10 * numTentativasRestantes;
         if(contador > contadorInicial)
             contador = contadorInicial;
         mutexContador.unlock();
+
+        numTentativasRestantes = 7;
 
         mutexBuffer.lock();
         buffer = "";
@@ -341,18 +350,17 @@ std::string verificaPalavra(std::string palavra, std::string &palavraCorreta){
 
 int main(){
     std::string palavra;
-    //std::thread p_arquivo(readRandomWord, "palavrasKermo.txt", std::ref(palavra));
+    
     readRandomWord("palavrasKermo.txt", std::ref(palavra));
 
-    std::thread p_teclado(entradaUser, palavra);
+    std::thread p_teclado(entradaUser, std::ref(palavra));
     std::thread p_timer(timer);
-    std::thread p_terminal(imprimeTerminal);
+    std::thread p_terminal(imprimeTerminal, std::ref(palavra));
     
 
     p_teclado.join();
     p_terminal.join();
     p_timer.join();
-    // p_arquivo.join();
 
     return 0;
 }
