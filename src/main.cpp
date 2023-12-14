@@ -267,12 +267,13 @@ std::string verificaPalavra(std::string palavra, std::string &palavraCorreta){
         retorno += GREEN;
         retorno += palavra;
         retorno += RESET;
+        retorno += "\n";
 
         mutexAcertos.lock();
         acertos++;
         mutexAcertos.unlock();
 
-        numTentativasRestantes = 6;
+        numTentativasRestantes = 7;
         
         mutexContador.lock();
         contador = (contador + 20);
@@ -284,11 +285,11 @@ std::string verificaPalavra(std::string palavra, std::string &palavraCorreta){
         buffer = "";
         mutexBuffer.unlock();
 
-        gameOverMutex.lock();
-        gameOver = true;
-        gameOverMutex.unlock();
+        // gameOverMutex.lock();
+        // gameOver = true;
+        // gameOverMutex.unlock();
         
-        //readRandomWord("palavrasKermo.txt", std::ref(palavraCorreta));
+        readRandomWord("palavrasKermo.txt", std::ref(palavraCorreta));
 
     }
     else{
